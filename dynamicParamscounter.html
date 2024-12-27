@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="nodeId" placeholder="Insert Your Desired Tag">
+    <input type="text" id="numberId" placeholder="Insert Your Desired Number">
+    <button id="createBtn" onclick="updateNumber">CREATE</button>
+    <script>
+        var nodeElement = document.getElementById("nodeId")
+        var numElement = document.getElementById("numberId")
+        var btnElement = document.getElementById("createBtn")
+        
+        function updateNumber(node,num){
+            var start = 0
+            var existingElement = document.getElementById("numContentId")
+
+            if(!existingElement){
+                existingElement = document.createElement(node)
+                existingElement.id = "numContentId"
+                existingElement.textContent = start
+            document.body.appendChild(existingElement)
+            }
+
+            var interval = setInterval(function(){
+                if (start < num){
+
+                    start++
+                        existingElement.textContent = start
+                }else {
+                    clearInterval(interval); 
+                    nodeElement.value = ""
+            nodeElement.focus()
+            numElement.value = ""
+
+                }
+            },300)
+        }
+
+        btnElement.addEventListener("click",function(){
+            var node = nodeElement.value.trim()
+            var num = numElement.value.trim()
+
+            if (node.toString() === "[object HTMLUnknownElement]"){
+                alert("Please Enter a Valid TagName !")
+                nodeElement.value = ""
+                nodeElement.focus()
+            }else{
+                nodeElement.value = node
+            }
+
+            if(num === isNaN || num < 0){
+                alert("Please Enter a Valid Number!")
+                numElement.value = ""
+                numElement.focus()
+                return
+            }
+            updateNumber(node,num)
+
+        })
+    </script>
+</body>
+</html>
