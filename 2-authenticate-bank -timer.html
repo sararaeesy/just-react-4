@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #secondPassId{
+            width: 100px;
+            height: 40px;
+            background-color: lightseagreen;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            border-color: #fff;
+            border-radius: 10px; 
+            border-style: none;
+        }
+        #secondPassId.disabled {
+            background-color: gray;
+            cursor:disabled;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="secondPassId">رمز پویا</button>
+    <script>
+    var secondPassBtn = document.getElementById("secondPassId") 
+
+    function renederTime(){
+        var minute = 2
+        var second = 0
+        secondPassBtn.textContent = minute + ':00';
+
+        var timer = setInterval(function () {
+                if (second === 0) {
+                    if (minute === 0) {
+                    clearInterval(timer)
+                    secondPassBtn.disabled = false
+                    secondPassBtn.textContent = "رمز پویا"
+                    secondPassBtn.classList.remove("disabled")
+                    return
+                }else{
+                    minute--
+                    second = 60
+                }
+            }else{
+                second--
+            }
+            // secondPassBtn.textContent = (minute<10 ? '0'+minute : minute) + ':' + (second<10 ? '0'+second : second )
+            secondPassBtn.textContent = minute + ':' + (second < 10 ? '0'+second : second);
+
+            },1000)
+        }
+
+        secondPassBtn.addEventListener("click", function(){
+            secondPassBtn.disabled = true
+            secondPassBtn.classList.add("disabled")
+            renederTime()     
+    })
+    </script>
+</body>
+</html>
