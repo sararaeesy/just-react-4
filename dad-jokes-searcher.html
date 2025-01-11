@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #content{
+            padding: 5px 40px;
+        }
+        #pages{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            padding: 12px 0px;
+        }
+        #pages button{
+            color: #00d1b2;
+            border-color: #dbdbdb;
+            background: #fff;
+            width: 100px;
+            padding: 10px;
+            margin: 5px 15px;
+        }
+        #pages button.disabled-btn {
+            background-color: #ddd;
+            color: #999;
+            cursor: not-allowed;
+            border: 1px solid #ccc;
+}
+        h2{
+            display: inline;
+        }
+        ul {
+            display: flex;
+            padding: 12px;
+            flex-wrap: wrap;
+            gap: 8%;
+        }
+        li {
+            width: 25%;
+            border: 1px solid greenyellow;
+            margin: 8px;
+            list-style: none;
+            text-decoration: none;
+            color: black;
+            padding: 5px;
+        }
+        li:hover {
+            color: rgb(151, 245, 10);
+        }
+        h4{
+            color: red
+            ;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" placeholder="Search terms..." id="userText">
+    <button id="searchBtn">Search</button>
+    <div id="content">
+        <div id="total"></div>
+    <div id="pages">
+        <button id="previousBtn">Previous</button>
+        <button id="nextBtn">Next</button>
+    </div>
+        <ul id="list"></ul>
+    </div>
+    <script>
+        const APIUrl = "https://icanhazdadjoke.com"
+        const totalResults = document.getElementById('total')
+        const input = document.getElementById('userText')
+        const searchBtn = document.getElementById('searchBtn')
+        const ul = document.getElementById('list')
+        const previousBtn = document.getElementById("previousBtn");
+        const nextBtn = document.getElementById("nextBtn");
+        let currentPage = 1
+
+        //render
+        function render({results,total_jokes,total_pages}){
+            totalResults.innerHTML = `<p><h2>${total_jokes}</h2> jokes found</p>`
+            ul.innerHTML = results.map((result) => {
+                return`
+                <li>
+                    <p>${result.joke}</p>
+                </li>
+                `;
+            }).join("")
+                }
+
+        //response
+        async function request(term, page = 1) {
+           try{
+            searchBtn.textContent = "loading..."
+            const url = `${APIUrl}/search?term=${term}&page=${page}`;
+            const response = await fetch(url,{
+                headers:{
+                    'Accept': 'application/json',
+                    'User-Agent': 'learning app'
+                },
+            })
+            const data = await response.json()
+            searchBtn.textContent = "Search"
+            input.value = ""
+            render(data)
+
+            if (data.total_pages === page) {
+                nextBtn.className = 'disabled-btn'
+                }else{
+                    nextBtn.classList.remove('disabled-btn')
+                }
+            if (page === 1) {
+                    previousBtn.className = 'disabled-btn'
+                }else{
+                    previousBtn.classList.remove('disabled-btn')
+                } 
+            currentPage = data.current_page;
+           }catch(e){
+            ul.innerHTML = ""
+            const h4 = document.createElement('H4')
+            h4.innerText = `${e}`
+            document.body.appendChild(h4)
+           } 
+        }
+    
+        input.addEventListener("keydown", function(e){
+            const value = e.target.value.trim()
+            if(e.key === "Enter"){
+                request(value)
+            }
+        })
+        searchBtn.addEventListener("click", function(){
+            const value = input.value.trim()
+            request(value)
+        })
+        nextBtn.addEventListener("click", ()=>{
+            const term = input.value.trim()
+            request(term, currentPage + 1)
+        })
+        previousBtn.addEventListener("click", ()=>{
+            const term = input.value.trim()
+            request(term, currentPage -1)
+        })
+    </script>
+</body>
+</html>
